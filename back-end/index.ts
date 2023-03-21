@@ -1,9 +1,9 @@
 import express from "express";
 import { LOCAL_PORT } from "./src/config";
 import { MongoClient } from "mongodb";
+import { MONGODB_URI } from "./src/config";
 
-const UIR = "mongodb://localhost:27017";
-const client = new MongoClient(UIR);
+const client = new MongoClient(MONGODB_URI);
 
 const app = express();
 
