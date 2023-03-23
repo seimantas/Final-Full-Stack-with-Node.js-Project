@@ -1,28 +1,27 @@
 {
   "name": "front-end",
+  "type": "module",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.ts"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "init": "^0.1.2",
     "joi": "^17.9.1",
+    "jsonwebtoken": "^9.0.0",
     "mongodb": "^5.1.0"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.13",
-    "@types/express": "^4.17.17",
-    "nodemon": "^2.0.21",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.2"
+    "nodemon": "^2.0.21"
   }
 }

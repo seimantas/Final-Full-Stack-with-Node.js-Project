@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { MongoClient } from "mongodb";
-import { MONGODB_URI } from "../config";
+import { MONGODB_URI } from "../../config.js";
 
-const users = Router();
+const usersController = Router();
 
 const client = new MongoClient(MONGODB_URI);
 
-users.get("/users", async (_, res) => {
+usersController.get("/", async (_, res) => {
   try {
     const con = await client.connect();
     const data = await con
@@ -15,10 +15,10 @@ users.get("/users", async (_, res) => {
       .find()
       .toArray();
     await con.close();
-    return res.send(data);
+    return res.send(data).end();
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" }).end();
   }
 });
 
-export default users;
+export default usersController;
