@@ -1,12 +1,9 @@
-import { Router } from "express";
 import { MongoClient } from "mongodb";
-import { MONGODB_URI } from "../config";
-
-const events = Router();
+import { MONGODB_URI } from "../../config";
 
 const client = new MongoClient(MONGODB_URI);
 
-events.get("/events", async (_, res) => {
+export const getEvents = async (res) => {
   try {
     const con = await client.connect();
     const data = await con
@@ -19,6 +16,4 @@ events.get("/events", async (_, res) => {
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
-});
-
-export default events;
+};
