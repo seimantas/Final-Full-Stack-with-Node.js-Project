@@ -2,9 +2,9 @@ import { Router } from "express";
 import { MongoClient } from "mongodb";
 import { MONGODB_URI } from "../../config.js";
 
-const client = new MongoClient(MONGODB_URI);
-
 const eventController = Router();
+
+const client = new MongoClient(MONGODB_URI);
 
 eventController.get("/", async (_, res) => {
   try {
