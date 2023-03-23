@@ -15,9 +15,9 @@ usersController.get("/", async (_, res) => {
       .find()
       .toArray();
     await con.close();
-    return res.send(data);
+    return res.send(data).end();
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" }).end();
   }
 });
 
