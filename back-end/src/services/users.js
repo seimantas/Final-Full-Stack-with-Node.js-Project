@@ -1,12 +1,12 @@
 import { Router } from "express";
 import { MongoClient } from "mongodb";
-import { MONGODB_URI } from "../config";
+import { MONGODB_URI } from "../../config.js";
 
-const users = Router();
+const usersController = Router();
 
 const client = new MongoClient(MONGODB_URI);
 
-users.get("/users", async (_, res) => {
+usersController.get("/", async (_, res) => {
   try {
     const con = await client.connect();
     const data = await con
@@ -21,4 +21,4 @@ users.get("/users", async (_, res) => {
   }
 });
 
-export default users;
+export default usersController;
