@@ -21,4 +21,105 @@ usersController.get("/", async (_, res) => {
   }
 });
 
+usersController.post("/", async (req, res) => {
+  const { age, dateOfBirth, email, eventNames, firstName, lastName } = req.body;
+
+  const newUser = {
+    age,
+    dateOfBirth,
+    email,
+    eventNames,
+    firstName,
+    lastName,
+  };
+
+  const validateUser = userSchema.validate(newUser);
+
+  if (
+    !age ||
+    !dateOfBirth ||
+    !email ||
+    !eventNames ||
+    !firstName ||
+    !lastName
+  ) {
+    return res.status(400).json({ message: "Invalid data" }).end();
+  }
+
+  const userToRegister = {
+    age: age,
+    dateOfBirth: dateOfBirth,
+    email: email,
+    eventNames: eventNames,
+    firstName: firstName,
+    lastName: lastName,
+  };
+
+  try {
+    const con = await client.connect();
+    const data = await con
+      .db("eventsManagerDB")
+      .collection("users")
+      .insertOne(userToRegister);
+    await con.close();
+
+    return res
+      .status(201)
+      .send(`User ${firstName} successfully created.`)
+      .end();
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" }).end();
+  }
+});
+
+usersController.patch("/:_id", async (req, res) => {
+  const { _id } = req.params;
+  const { age, dateOfBirth, email, eventNames, firstName, lastName } = req.body;
+
+  const userToUpdate = {
+    age: age,
+    dateOfBirth: dateOfBirth,
+    email: email,
+    eventNames: eventNames,
+    firstName: firstName,
+    lastName: lastName,
+  };
+
+  try {
+    const con = await client.connect();
+    const data = await con
+      .db("eventsManagerDB")
+      .collection("users")
+      .findOneAndUpdate(_id, { $set: userToUpdate });
+    await con.close();
+
+    return res
+      .status(201)
+      .send(`User ${firstName} successfully updated.`)
+      .end();
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" }).end();
+  }
+});
+
+usersController.delete("/:_id", async (req, res) => {
+  const { _id } = req.params;
+
+  try {
+    const con = await client.connect();
+    const data = await con
+      .db("eventsManagerDB")
+      .collection("users")
+      .findOneAndDelete(_id);
+    await con.close();
+
+    return res
+      .status(201)
+      .send(`User ${firstName} successfully deleted.`)
+      .end();
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" }).end();
+  }
+});
+
 export default usersController;
