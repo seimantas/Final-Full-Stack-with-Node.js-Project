@@ -1,4 +1,5 @@
 export const RegisterAdmin = () => {
+
     return (
         <form>
             <h1>Administrator Registration</h1>

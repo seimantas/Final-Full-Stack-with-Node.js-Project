@@ -1,7 +1,7 @@
 import { FC, useState } from "react";
 import { Link} from "react-router-dom";
 
-export const Heade: FC = () => {
+export const Header : FC = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     const handleLogout = () => {    

@@ -1,9 +1,10 @@
 import { createContext } from "react";
+import { TAppDataContext } from "./type";
 
-const INITIAL_VALUE ={
+export const INITIAL_VALUE: TAppDataContext ={
     events: [],
     users: [],
     admins: [],
-} as const
+}
 
 export const AppDataContext = createContext(INITIAL_VALUE);
