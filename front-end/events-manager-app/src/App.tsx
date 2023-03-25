@@ -1,11 +1,11 @@
-
-import './App.css';
+import { AppDataContext } from './components';
+import { ManeRouter } from './components/ManeRouter';
 
 function App() {
   return (
-    <div>
-
-    </div>
+     <AppDataContext.Provider value={INITIA}>
+      <ManeRouter/>
+    </AppDataContext.Provider>
   );
 }
 
