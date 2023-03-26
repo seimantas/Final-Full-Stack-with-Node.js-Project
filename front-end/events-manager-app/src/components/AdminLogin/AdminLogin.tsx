@@ -17,16 +17,14 @@ export const AdminLogin = () => {
       lastName,
       password,
     } as TAdmin;
-console.log(adminToLogin)
-    axios
+   
+axios
       .post("http://localhost:5000/login", adminToLogin)
       .then((response) => {
         const token = response.data.token;
-
-console.log(token)
-
         localStorage.setItem("token", token);
-        navigate("/events")
+        navigate("/events");
+       window.location.reload()
       })
       .catch((error) => {
         alert("Wrong credentials");
@@ -52,7 +50,7 @@ console.log(token)
         placeholder="Password"
         required
       />
-      <button type="submit">Submit</button>
+      <button type="submit">Log in</button>
       <p>
         if you don't have an account, you can register here:{" "}
         <a href="/admin-registration">Register</a>

@@ -1,1 +1,0 @@
-export { AppDataContext } from "./AppDataContext";

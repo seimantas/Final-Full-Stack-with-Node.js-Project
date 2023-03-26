@@ -1,26 +1,31 @@
-import { FC, useState } from "react";
-import { Link} from "react-router-dom";
+import { FC, useContext, } from "react";
+import { Link, useNavigate} from "react-router-dom"
+import { ItHavePremissionContext } from "../ItHavePremissinContext";
+
+
 
 export const Header : FC = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    const handleLogout = () => {    
-        setIsLoggedIn(false);
+    const { isLogdin, setIsLogdin } = useContext(ItHavePremissionContext);
+    const navigate = useNavigate();
     
-    }
+    const toLogout = () => {
+    localStorage.removeItem("token"); 
+    setIsLogdin(false); 
+    navigate("/")
+  };
 
     return (
         <>
-            <img src="https://www.technocrazed.com/wp-content/uploads/2015/12/Event-Management-System-Project-in-Java.jpg" alt="event-manager-malogo" />
+            <img src="" alt="event-manager-malogo" />
             <h1>Event Manager</h1>
-            
-            {isLoggedIn ? (
-             <>
+            {isLogdin ? (
+             <div>
                 <button><Link to="/events">Events</Link></button>
                 <button><Link to="/users-list">Users</Link></button>
-             </> 
-            ) : (   
-                <button>Login</button>
+                <button onClick={toLogout}>Log out</button>
+                </div> 
+            ) : (
+                <p>You are not logged in</p>
             )}
         </>
     )

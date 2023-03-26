@@ -1,2 +1,2 @@
 export { ManeRouter } from "./ManeRouter";
-export { AppDataContext } from "./AppDataContext";
+export { ItHavePremissionContext } from "./ItHavePremissinContext";
