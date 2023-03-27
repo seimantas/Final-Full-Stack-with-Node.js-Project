@@ -60,28 +60,6 @@ eventController.post("/", async (req, res) => {
   }
 });
 
-eventController.patch("/:_id", async (req, res) => {
-  const { _id } = req.params;
-  const { eventName } = req.body;
-
-  const eventToUpdate = {
-    eventName,
-  };
-
-  try {
-    const con = await client.connect();
-    const data = await con
-      .db("eventsManagerDB")
-      .collection("events")
-      .findOneAndUpdate(_id, { $set: eventToUpdate });
-    await con.close();
-
-    return res.send(data).end();
-  } catch (error) {
-    res.status(500).json({ message: "Internal server error" }).end();
-  }
-});
-
 eventController.delete("/:eventName", async (req, res) => {
   const { eventName } = req.params;
 

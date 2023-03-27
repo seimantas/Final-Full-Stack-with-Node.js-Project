@@ -13,7 +13,7 @@ const EVENT_NAMES = [
   "Live Talk",
 ];
 
-export const CreateUserForm:FC<TCreateUserForm> = ({ onClose }, handleCreateUser) => {
+export const CreateUserForm:FC<TCreateUserForm> = ({ onClose, onCreateUser }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [age, setAge] = useState("");
@@ -40,8 +40,8 @@ export const CreateUserForm:FC<TCreateUserForm> = ({ onClose }, handleCreateUser
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((response) => {
-        handleCreateUser=(response.data);
+      .then((response) => {     
+        onCreateUser(response.data);
         onClose();
       })
       .catch((error) => {

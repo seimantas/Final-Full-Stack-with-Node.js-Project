@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { MONGODB_URI } from "../../config.js";
 import { userSchema } from "../models/userSchema.js";
 
@@ -141,10 +141,17 @@ usersController.delete("/:_id", async (req, res) => {
 
   try {
     const con = await client.connect();
-    const data = await con
-      .db("eventsManagerDB")
-      .collection("users")
-      .findOneAndDelete(_id);
+    const users = con.db("eventsManagerDB").collection("users");
+
+    const user = await users.findOne({ _id: new ObjectId(_id) });
+    if (!user) {
+      await con.close();
+      return res.status(404).json({ message: "User not found" }).end();
+    }
+
+    const { firstName } = user;
+    await users.deleteOne({ _id: new ObjectId(_id) });
+
     await con.close();
 
     return res
@@ -152,14 +159,13 @@ usersController.delete("/:_id", async (req, res) => {
       .send(`User ${firstName} successfully deleted.`)
       .end();
   } catch (error) {
-    next(error);
-  } finally {
-    await client.close();
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" }).end();
   }
 });
 
 usersController.use((err, req, res, next) => {
+  console.error(err);
   res.status(500).json({ message: "Internal server error" }).end();
 });
-
 export default usersController;
