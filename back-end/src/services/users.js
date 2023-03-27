@@ -1,12 +1,13 @@
 import { Router } from "express";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { MONGODB_URI } from "../../config.js";
+import { userSchema } from "../models/userSchema.js";
 
 const usersController = Router();
 
 const client = new MongoClient(MONGODB_URI);
 
-usersController.get("/", async (_, res) => {
+usersController.get("/all", async (req, res, next) => {
   try {
     const con = await client.connect();
     const data = await con
@@ -14,35 +15,62 @@ usersController.get("/", async (_, res) => {
       .collection("users")
       .find()
       .toArray();
-    await con.close();
-    return res.send(data).end();
+    res.set({
+      Authorization: `Bearer ${req.token}`,
+      "Content-Type": "application/json",
+    });
+    return res.send(data);
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" }).end();
+    next(error);
+  } finally {
+    await client.close();
   }
 });
 
+usersController.use((err, req, res, next) => {
+  res.status(500).json({ message: "Internal server error" }).end();
+});
+
+usersController.get("/", async (req, res) => {
+  try {
+    const con = await client.connect();
+    const data = await con
+      .db("eventsManagerDB")
+      .collection("users")
+      .find({ eventName: req.query.eventName })
+      .toArray();
+    await con.close();
+    res.set({
+      Authorization: `Bearer ${req.token}`,
+      "Content-Type": "application/json",
+    });
+    return res.send(data);
+  } catch (error) {
+    next(error);
+  } finally {
+    await client.close();
+  }
+});
+
+usersController.use((err, req, res, next) => {
+  res.status(500).json({ message: "Internal server error" }).end();
+});
+
 usersController.post("/", async (req, res) => {
-  const { age, dateOfBirth, email, eventNames, firstName, lastName } = req.body;
+  const { age, dateOfBirth, email, eventName, firstName, lastName } = req.body;
 
   const newUser = {
     age,
     dateOfBirth,
     email,
-    eventNames,
+    eventName,
     firstName,
     lastName,
   };
 
-  const validateUser = userSchema.validate(newUser);
+  const userValidate = userSchema.validate(newUser);
 
-  if (
-    !age ||
-    !dateOfBirth ||
-    !email ||
-    !eventNames ||
-    !firstName ||
-    !lastName
-  ) {
+  if (!age || !dateOfBirth || !email || !eventName || !firstName || !lastName) {
     return res.status(400).json({ message: "Invalid data" }).end();
   }
 
@@ -50,7 +78,7 @@ usersController.post("/", async (req, res) => {
     age: age,
     dateOfBirth: dateOfBirth,
     email: email,
-    eventNames: eventNames,
+    eventName: eventName,
     firstName: firstName,
     lastName: lastName,
   };
@@ -68,8 +96,14 @@ usersController.post("/", async (req, res) => {
       .send(`User ${firstName} successfully created.`)
       .end();
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" }).end();
+    next(error);
+  } finally {
+    await client.close();
   }
+});
+
+usersController.use((err, req, res, next) => {
+  res.status(500).json({ message: "Internal server error" }).end();
 });
 
 usersController.patch("/:_id", async (req, res) => {
@@ -107,10 +141,17 @@ usersController.delete("/:_id", async (req, res) => {
 
   try {
     const con = await client.connect();
-    const data = await con
-      .db("eventsManagerDB")
-      .collection("users")
-      .findOneAndDelete(_id);
+    const users = con.db("eventsManagerDB").collection("users");
+
+    const user = await users.findOne({ _id: new ObjectId(_id) });
+    if (!user) {
+      await con.close();
+      return res.status(404).json({ message: "User not found" }).end();
+    }
+
+    const { firstName } = user;
+    await users.deleteOne({ _id: new ObjectId(_id) });
+
     await con.close();
 
     return res
@@ -118,8 +159,13 @@ usersController.delete("/:_id", async (req, res) => {
       .send(`User ${firstName} successfully deleted.`)
       .end();
   } catch (error) {
+    console.error(error);
     res.status(500).json({ message: "Internal server error" }).end();
   }
 });
 
+usersController.use((err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ message: "Internal server error" }).end();
+});
 export default usersController;

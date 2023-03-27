@@ -6,7 +6,7 @@ import { Events } from "../Events"
 import { Header } from "../Header"
 import { PageNotFound } from "../PageNotFound"
 import { RegisterAdmin } from "../RegisterAdmin/RegisterAdmin"
-import { UsersList } from "../UsersList"
+import { UsersList } from "../Users/UsersList"
 
 export const ManeRouter:FC = () => {
 
