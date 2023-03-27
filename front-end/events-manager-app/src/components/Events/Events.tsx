@@ -10,6 +10,7 @@ export const Events = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [newEventName, setNewEventName] = useState<string>("");
+  const [triger, setTriger] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
@@ -29,7 +30,7 @@ export const Events = () => {
         setError(error.message);
         setLoading(false);
       });
-  }, []);
+  }, [triger]);
 
   useEffect(() => {
     if (selectedEvent) {
@@ -59,7 +60,6 @@ export const Events = () => {
   const handleDeleteEvent = async (event: TEvent) => {
     setLoading(true);
     try {
-        console.log(event.eventName)
       await axios.delete(`http://localhost:5000/events/${event.eventName}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -76,6 +76,8 @@ export const Events = () => {
   const handleEventClick = (event: TEvent) => {
     setSelectedEvent(event);
   };
+ 
+ 
   const handleSubmitNewEvent = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
@@ -91,6 +93,7 @@ export const Events = () => {
       );
       setEvents([...events, response.data]);
       setNewEventName("");
+      setTriger(!triger)
     } catch (error) {
       setError(error as string);
     }
