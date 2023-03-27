@@ -6,16 +6,20 @@ const usersController = Router();
 
 const client = new MongoClient(MONGODB_URI);
 
-usersController.get("/", async (_, res) => {
+usersController.get("/", async (req, res) => {
   try {
     const con = await client.connect();
     const data = await con
       .db("eventsManagerDB")
       .collection("users")
-      .find()
+      .find({ eventName: req.query.eventName })
       .toArray();
     await con.close();
-    return res.send(data).end();
+    res.set({
+      Authorization: `Bearer ${req.token}`,
+      "Content-Type": "application/json",
+    });
+    return res.send(data);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" }).end();
   }

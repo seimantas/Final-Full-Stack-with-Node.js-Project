@@ -7,7 +7,7 @@ const eventController = Router();
 
 const client = new MongoClient(MONGODB_URI);
 
-eventController.get("/", async (_, res) => {
+eventController.get("/", async (req, res) => {
   try {
     const con = await client.connect();
     const data = await con
@@ -16,37 +16,38 @@ eventController.get("/", async (_, res) => {
       .find()
       .toArray();
     await con.close();
-
-    return res.send(data).end();
+    res.set({
+      Authorization: `Bearer ${req.token}`,
+      "Content-Type": "application/json",
+    });
+    return res.send(data);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" }).end();
   }
 });
 
 eventController.post("/", async (req, res) => {
-  const { eventName, participants } = req.body;
+  const { eventName } = req.body;
 
   const newEventData = {
     eventName,
-    participants,
   };
 
   const validEventData = eventSchema.validate(newEventData);
 
-  if (!eventName || !participants) {
+  if (!eventName) {
     return res.status(400).json({ message: "Invalid data" }).end();
   }
 
   const eventToRegister = {
     eventName: eventName,
-    participants: participants,
   };
 
   try {
     const con = await client.connect();
     const data = await con
       .db("eventsManagerDB")
-      .collection("admins")
+      .collection("events")
       .insertOne(eventToRegister);
     await con.close();
 
@@ -61,11 +62,10 @@ eventController.post("/", async (req, res) => {
 
 eventController.patch("/:_id", async (req, res) => {
   const { _id } = req.params;
-  const { participants } = req.body;
+  const { eventName } = req.body;
 
   const eventToUpdate = {
     eventName,
-    participants,
   };
 
   try {
