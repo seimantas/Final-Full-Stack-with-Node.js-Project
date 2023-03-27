@@ -1,7 +1,7 @@
 export type TUser = {
   _id?: string;
   age?: number;
-  dataOfBirth?: string;
+  dateOfBirth?: string;
   email?: string;
   firstName?: string;
   lastName?: string;
@@ -9,3 +9,8 @@ export type TUser = {
 };
 
 export type TUsers = TUser[];
+
+export type TCreateUserForm = {
+  handleCreateUser: (user: TUser) => void;
+  onClose: () => void;
+};

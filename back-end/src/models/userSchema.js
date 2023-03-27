@@ -1,10 +1,10 @@
-import Joic from "joi";
+import Joi from "joi";
 
-export const userSchema = {
-  age: Joic.number().integer().min(18).max(100).required(),
-  dateOfBirth: Joic.date().required(),
-  email: Joic.string().email().required(),
-  eventNames: Joic.array().items(Joic.string()),
-  firstName: Joic.string().required(),
-  lastName: Joic.string().required(),
-};
+export const userSchema = Joi.object({
+  age: Joi.number().required(),
+  dateOfBirth: Joi.string().required(),
+  email: Joi.string().required(),
+  eventName: Joi.string().required(),
+  firstName: Joi.string().required(),
+  lastName: Joi.string().required(),
+});
