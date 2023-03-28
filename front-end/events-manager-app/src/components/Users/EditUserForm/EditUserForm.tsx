@@ -1,22 +1,16 @@
 import axios from "axios";
-import { FC, useState } from "react";
-import { TCreateUserForm } from "../../UsersList/type";
+import { FC, useContext, useState } from "react";
+import { TCreateUserForm } from "../UsersList/type";
+import { Button, FormControl, FormLabel, Input, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { EventContext } from "../../EventConext";
 
 
-const EVENT_NAMES = [
-  "Big Bnd concert",
-  "The Jonny show",
-  "Unbelievable Mike performance",
-  "Mia concert",
-  "Guess Who show",
-  "Pot of Gold",
-  "Live Talk",
-];
 
 export const EditUserForm: FC<TCreateUserForm> = ({
   onClose,
-user
+  user
 }) => {
+  const EVENT_NAMES =useContext(EventContext)
     const [firstName, setFirstName] = useState(user?.firstName || "");
     const [lastName, setLastName] = useState(user?.lastName || "");
     const [age, setAge] = useState(user?.age || 0);
@@ -53,68 +47,64 @@ user
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>{user ? "Edit" : "Create New"} User</h2>
+        <Typography variant="h4">{user ? "Edit" : "Create New"} User</Typography>
         <form onSubmit={handleSubmit}>
-          <label>
-            First Name:
-            <input
-              
-              type="text"
-              value={firstName}
-              onChange={(event) => setFirstName(event.target.value)}
-            />
-          </label>
-          <label>
-            Last Name:
-            <input
-              
-              type="text"
-              value={lastName}
-              onChange={(event) => setLastName(event.target.value)}
-            />
-          </label>
-          <label>
-            Age:
-            <input
-              
-              type="number"
-              value={age}
-              onChange={(event) => setAge(Number(event.target.value))}
-            />
-          </label>
-          <label>
-            Date of Birth:
-            <input
-              
-              type="date"
-              value={dateOfBirth}
-              onChange={(event) => setDateOfBirth(event.target.value)}
-            />
-          </label>
-          <label>
-            Email:
-            <input
-              
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-          </label>
-          <label>
-            Event Name:
-            <select value={eventName} onChange={(event) => setEventName(event.target.value)}>
-              <option value="">Select an event</option>
-              {EVENT_NAMES.map((name) => (
-                <option key={name} value={name}>
+          <TextField
+            label="First Name"
+            value={firstName}
+            onChange={(event) => setFirstName(event.target.value)}
+            variant="outlined"
+            margin="normal"
+            fullWidth
+          />
+          <TextField
+            label="Last Name"
+            value={lastName}
+            onChange={(event) => setLastName(event.target.value)}
+            variant="outlined"
+            margin="normal"
+            fullWidth
+          />
+          <TextField
+            label="Age"
+            type="number"
+            value={age}
+            onChange={(event) => setAge(Number(event.target.value))}
+            variant="outlined"
+            margin="normal"
+            fullWidth
+          />
+          <TextField
+            label="Date of Birth"
+            type="date"
+            value={dateOfBirth}
+            onChange={(event) => setDateOfBirth(event.target.value)}
+            variant="outlined"
+            margin="normal"
+            fullWidth
+          />
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            variant="outlined"
+            margin="normal"
+            fullWidth
+          />
+          <FormControl variant="outlined" margin="normal" fullWidth>
+            <InputLabel>Event Name</InputLabel>
+            <Select value={eventName} onChange={(event) => setEventName(event.target.value)}>
+              <MenuItem value="">Select an event</MenuItem>
+              {EVENT_NAMES.eventName.map((name) => (
+                <MenuItem key={name} value={name}>
                   {name}
-                </option>
+                </MenuItem>
               ))}
-            </select>
-          </label>
-          <button type="submit">{user ? "Save Changes" : "Create User"}</button>
-          <button type="button" onClick={onClose}>
-            Cancel
-          </button>
+            </Select>
+          </FormControl>
+          <Button type="submit" variant="contained" color="primary">{user ? "Save Changes" : "Create User"}</Button>
+          <Button type="button" onClick={onClose} variant="outlined" color="secondary" sx={{ ml: 1 }}>Cancel</Button>
         </form>
       </div>
     </div>

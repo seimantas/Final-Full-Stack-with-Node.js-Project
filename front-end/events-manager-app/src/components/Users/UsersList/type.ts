@@ -14,4 +14,5 @@ export type TCreateUserForm = {
   onClose: () => void;
   onCreateUser: (newUser: TUser) => void;
   user?: TUser;
+  isOpen: boolean;
 };
