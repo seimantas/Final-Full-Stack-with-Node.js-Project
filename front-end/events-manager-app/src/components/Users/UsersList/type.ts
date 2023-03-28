@@ -13,4 +13,5 @@ export type TUsers = TUser[];
 export type TCreateUserForm = {
   onClose: () => void;
   onCreateUser: (newUser: TUser) => void;
+  user?: TUser;
 };

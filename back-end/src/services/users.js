@@ -106,32 +106,38 @@ usersController.use((err, req, res, next) => {
   res.status(500).json({ message: "Internal server error" }).end();
 });
 
-usersController.patch("/:_id", async (req, res) => {
+usersController.post("/:_id", async (req, res) => {
   const { _id } = req.params;
-  const { age, dateOfBirth, email, eventNames, firstName, lastName } = req.body;
-
+  const { age, dateOfBirth, email, eventName, firstName, lastName } = req.body;
+  console.log(req.params);
   const userToUpdate = {
     age: age,
     dateOfBirth: dateOfBirth,
     email: email,
-    eventNames: eventNames,
+    eventName: eventName,
     firstName: firstName,
     lastName: lastName,
   };
 
   try {
     const con = await client.connect();
-    const data = await con
-      .db("eventsManagerDB")
-      .collection("users")
-      .findOneAndUpdate(_id, { $set: userToUpdate });
+    const users = con.db("eventsManagerDB").collection("users");
+    const user = await users.findOne({ _id: _id });
+    if (!user) {
+      await con.close();
+      return res.status(404).json({ message: "User not found" }).end();
+    }
+
+    await users.update({ _id: _id }, { $set: { userToUpdate } });
+
     await con.close();
 
     return res
       .status(201)
-      .send(`User ${firstName} successfully updated.`)
+      .send(`User ${user.firstName} successfully updated.`)
       .end();
   } catch (error) {
+    console.error(error.message);
     res.status(500).json({ message: "Internal server error" }).end();
   }
 });

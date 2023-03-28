@@ -1,14 +1,19 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { CreateUserForm } from "../CreateUserForm/CreateUserForm";
+import { EditUserForm } from "../EditUserForm";
 import { TUser } from "./type";
+
+
+
 
 export const UsersList = () => {
   const [users, setUsers] = useState<TUser[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [isCreateUserFormOpen, setIsCreateUserFormOpen] = useState<boolean>(false);
+  const [isCreateUserFormOpen, setIsCreateUserFormOpen] = useState<boolean>(false,);
   const [triger, setTriger] = useState<boolean>(false);
+const [isEditUserFormOpen, setIsEditUserFormOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
@@ -29,25 +34,11 @@ export const UsersList = () => {
       });
   }, [triger]);
 
-  const handleCreateUser = () => {
+  const handleRenderList = () => {
     setTriger(!triger);
   };
 
-  const handleEditUser = (user: TUser) => {
-    const { _id } = user;
-
-    axios.post( `http://localhost:5000/users/${_id}`, { 
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-    .then((response) => {
-      setTriger(!triger);
-    })
-    .catch((error) => {
-      setError(error.message);
-    });
-  };
+ 
 
 
 
@@ -69,6 +60,7 @@ export const UsersList = () => {
   };
 
   const onClose = () => {
+    setIsEditUserFormOpen(false);
     setIsCreateUserFormOpen(false);
   };
 
@@ -80,6 +72,7 @@ export const UsersList = () => {
       <table>
         <thead>
           <tr>
+            
             <th>First Name</th>
             <th>Last Name</th>
             <th>Age</th>
@@ -89,9 +82,10 @@ export const UsersList = () => {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
+        <tbody >
           {users.map((user: TUser) => (
             <tr key={user._id}>
+              
               <td>{user.firstName}</td>
               <td>{user.lastName}</td>
               <td>{user.age}</td>
@@ -99,7 +93,7 @@ export const UsersList = () => {
               <td>{user.email}</td>
               <td>{user.eventName || "-"}</td>
               <td>
-                <button onClick={() => handleEditUser(user)}>Edit</button>
+                <button  onClick={() => setIsEditUserFormOpen(true)}>Edit</button>
                 <button onClick={() => handleDeleteUser(user)}>Delete</button>
               </td>
             </tr>
@@ -107,7 +101,8 @@ export const UsersList = () => {
         </tbody>
       </table>
       <button onClick={() => setIsCreateUserFormOpen(true)}>Create New User</button>
-      {isCreateUserFormOpen && <CreateUserForm onClose={onClose} onCreateUser={handleCreateUser} />}
+      {isCreateUserFormOpen && <CreateUserForm onClose={onClose} onCreateUser={handleRenderList} />}
+          {isEditUserFormOpen && <EditUserForm user={{}} onClose={onClose} onCreateUser={handleRenderList} />}
     </div>
   );
 };

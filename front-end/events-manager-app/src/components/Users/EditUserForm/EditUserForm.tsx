@@ -3,8 +3,6 @@ import { FC, useState } from "react";
 import { TCreateUserForm } from "../UsersList/type";
 
 
-
-
 const EVENT_NAMES = [
   "Big Bnd concert",
   "The Jonny show",
@@ -15,18 +13,20 @@ const EVENT_NAMES = [
   "Live Talk",
 ];
 
-export const CreateUserForm:FC<TCreateUserForm> = ({ onClose, onCreateUser }) => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [age, setAge] = useState("");
-  const [dateOfBirth, setDateOfBirth] = useState("");
-  const [email, setEmail] = useState("");
-  const [eventName, setEventName] = useState("");
+export const EditUserForm: FC<TCreateUserForm> = ({
+  onClose,
+user
+}) => {
+    const [firstName, setFirstName] = useState(user?.firstName || "");
+    const [lastName, setLastName] = useState(user?.lastName || "");
+    const [age, setAge] = useState(user?.age || 0);
+    const [dateOfBirth, setDateOfBirth] = useState(user?.dateOfBirth || "");
+    const [email, setEmail] = useState(user?.email || "");
+    const [eventName, setEventName] = useState(user?.eventName || "");
 
-  const handleSubmit = (event:any) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    const newUser = {
+    const editedUser = {
       firstName,
       lastName,
       age,
@@ -35,15 +35,14 @@ export const CreateUserForm:FC<TCreateUserForm> = ({ onClose, onCreateUser }) =>
       eventName,
     };
 
-    
     axios
-      .post("http://localhost:5000/users", newUser, {
+      .post(`http://localhost:5000/users/${user?._id}`, editedUser, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       })
-      .then((response) => {     
-        onCreateUser(response.data);
+      .then((response) => {
+        
         onClose();
       })
       .catch((error) => {
@@ -54,11 +53,12 @@ export const CreateUserForm:FC<TCreateUserForm> = ({ onClose, onCreateUser }) =>
   return (
     <div className="modal">
       <div className="modal-content">
-        <h2>Create New User</h2>
+        <h2>{user ? "Edit" : "Create New"} User</h2>
         <form onSubmit={handleSubmit}>
           <label>
             First Name:
-            <input required
+            <input
+              
               type="text"
               value={firstName}
               onChange={(event) => setFirstName(event.target.value)}
@@ -66,7 +66,8 @@ export const CreateUserForm:FC<TCreateUserForm> = ({ onClose, onCreateUser }) =>
           </label>
           <label>
             Last Name:
-            <input required
+            <input
+              
               type="text"
               value={lastName}
               onChange={(event) => setLastName(event.target.value)}
@@ -74,15 +75,17 @@ export const CreateUserForm:FC<TCreateUserForm> = ({ onClose, onCreateUser }) =>
           </label>
           <label>
             Age:
-            <input required
+            <input
+              
               type="number"
               value={age}
-              onChange={(event) => setAge(event.target.value)}
+              onChange={(event) => setAge(Number(event.target.value))}
             />
           </label>
           <label>
             Date of Birth:
-            <input required
+            <input
+              
               type="date"
               value={dateOfBirth}
               onChange={(event) => setDateOfBirth(event.target.value)}
@@ -90,7 +93,8 @@ export const CreateUserForm:FC<TCreateUserForm> = ({ onClose, onCreateUser }) =>
           </label>
           <label>
             Email:
-            <input required
+            <input
+              
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
@@ -98,21 +102,20 @@ export const CreateUserForm:FC<TCreateUserForm> = ({ onClose, onCreateUser }) =>
           </label>
           <label>
             Event Name:
-            <select required
-              value={eventName}
-              onChange={(event) => setEventName(event.target.value)}
-            >
-              <option value="">Select an event name...</option>
-              {EVENT_NAMES.map((eventName) => (
-                <option key={eventName} value={eventName}>
-                  {eventName}
+            <select value={eventName} onChange={(event) => setEventName(event.target.value)}>
+              <option value="">Select an event</option>
+              {EVENT_NAMES.map((name) => (
+                <option key={name} value={name}>
+                  {name}
                 </option>
               ))}
             </select>
           </label>
-          <button type="submit">Create User</button>
+          <button type="submit">{user ? "Save Changes" : "Create User"}</button>
+          <button type="button" onClick={onClose}>
+            Cancel
+          </button>
         </form>
-        <button onClick={onClose}>Close</button>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState, useMemo } from "react";
-import type { TUser } from "../Users/UsersList/type";
+import { TUser } from "../Users/UsersList/type";
 import type { TEvent } from "./type";
 
 export const Events = () => {
