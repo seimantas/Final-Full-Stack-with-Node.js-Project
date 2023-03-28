@@ -1,6 +1,6 @@
 import axios from "axios";
 import { FC, useState } from "react";
-import { TCreateUserForm } from "../UsersList/type";
+import { TCreateUserForm } from "../../UsersList/type";
 
 
 const EVENT_NAMES = [

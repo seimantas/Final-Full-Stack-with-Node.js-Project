@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { CreateUserForm } from "../CreateUserForm/CreateUserForm";
-import { EditUserForm } from "../EditUserForm";
+import { CreateUserForm } from "../Users/CreateUserForm/CreateUserForm";
+import { EditUserForm } from "../Users/EditUserForm";
 import { TUser } from "./type";
 
 
