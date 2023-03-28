@@ -1,7 +1,9 @@
+import { Typography } from '@mui/material';
+
 export const PageNotFound = () => {
     return (
-        <div>
-            <h1>Page Not Found</h1>
-        </div>
-    )
+        <Typography variant="h4" component="div" sx={{ textAlign: 'center', mt: 4 }}>
+          Page Not Found
+        </Typography>
+      );
 }

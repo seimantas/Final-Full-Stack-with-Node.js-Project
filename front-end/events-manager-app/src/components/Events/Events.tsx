@@ -1,7 +1,10 @@
 import axios from "axios";
-import { useEffect, useState, useMemo } from "react";
-import type { TUser } from "../Users/UsersList/type";
+import { useEffect, useState, useMemo, useContext } from "react";
+import { TUser } from "../Users/UsersList/type";
 import type { TEvent } from "./type";
+import { Button, FormControl, InputLabel, Input, List, ListItem, Paper, Typography } from '@mui/material';
+import { EventContext } from "../EventConext";
+
 
 export const Events = () => {
   const [events, setEvents] = useState<TEvent[]>([]);
@@ -11,6 +14,11 @@ export const Events = () => {
   const [error, setError] = useState<string>("");
   const [newEventName, setNewEventName] = useState<string>("");
   const [triger, setTriger] = useState<boolean>(false);
+  const [eventName, setEventName] = useState<string[]>([]);
+
+  const EVENT_NAMES=useContext(EventContext)
+
+
 
   useEffect(() => {
     setLoading(true);
@@ -103,41 +111,46 @@ export const Events = () => {
   const memoizedUsers = useMemo(() => users, [users]);
 
   return (
-    <div>
-      <h2>Events</h2>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      <form onSubmit={handleSubmitNewEvent}>
-        <label>
-          New Event Name:
-          <input
-            type="text"
-            value={newEventName}
-            onChange={(event) => setNewEventName(event.target.value)}
-          />
-        </label>
-        <button type="submit">Create</button>
-      </form>
-      <ul>
-      {events.map((event: TEvent) => (
-            <li key={event._id} onClick={() => handleEventClick(event)}>
-            {event.eventName}
-            <button key={`${event._id}`} onClick={() => handleDeleteEvent(event)}>Delete</button>
-          </li>
+    <EventContext.Provider value={{eventName,setEventName}}>
+    <Paper sx={{ p: 2 }}>
+      <Typography variant="h2" sx={{ mb: 2 }}>
+        Events
+      </Typography>
+      {loading && <Typography>Loading...</Typography>}
+      {error && <Typography color="error">Error: {error}</Typography>}
+      <FormControl component="form" onSubmit={handleSubmitNewEvent} sx={{ mb: 2 }}>
+        <InputLabel htmlFor="new-event-name-input">New Event Name:</InputLabel>
+        <Input
+          id="new-event-name-input"
+          type="text"
+          value={newEventName}
+          onChange={(event) => setNewEventName(event.target.value)}
+        />
+        <Button variant="contained" type="submit" sx={{ ml: 1 }}>Create</Button>
+      </FormControl>
+      <List sx={{ mb: 2 }}>
+        {events.map((event) => (
+          <ListItem key={event._id} button onClick={() => handleEventClick(event)}>
+            <Typography sx={{ flexGrow: 1 }}>{event.eventName}</Typography>
+            <Button key={`${event._id}`} onClick={() => handleDeleteEvent(event)}>Delete</Button>
+          </ListItem>
         ))}
-      </ul>
+      </List>
       {selectedEvent && (
-        <div>
-          <h2>{selectedEvent.eventName} Participants</h2>
-          <ul>
-            {memoizedUsers.map((user: TUser) => (
-              <li key={user._id}>
-              {user.firstName} {user.lastName}
-            </li>
+        <Paper sx={{ p: 2 }}>
+          <Typography variant="h2" sx={{ mb: 2 }}>
+            {selectedEvent.eventName} Participants
+          </Typography>
+          <List>
+            {memoizedUsers.map((user) => (
+              <ListItem key={user._id}>
+                <Typography>{user.firstName} {user.lastName}</Typography>
+              </ListItem>
             ))}
-          </ul>
-        </div>
+          </List>
+        </Paper>
       )}
-    </div>
+    </Paper>
+    </EventContext.Provider>
   );
-};
+}

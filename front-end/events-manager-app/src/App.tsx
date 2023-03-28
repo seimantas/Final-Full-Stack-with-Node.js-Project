@@ -1,10 +1,11 @@
 import { useContext, useEffect, useState } from 'react';
-import { ItHavePremissionContext } from './components';
-import { Events } from './components/Events';
+import { ItHavePremissionContext } from './components/ItHavePremissinContext/ItHavePremissionContext';
+import { ItHavePremission } from './components/ItHavePremissinContext/type';
 import { ManeRouter } from './components/ManeRouter';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 function App() {
-  const loginContext=useContext(ItHavePremissionContext)
+  const loginContext=useContext<ItHavePremission>(ItHavePremissionContext)
   const [isLogdin, setIsLogdin] = useState(loginContext.isLogdin);
 
   useEffect(() => {
@@ -15,10 +16,27 @@ function App() {
     }
   }, [isLogdin]);
 
+  const theme = createTheme({
+    typography: {
+      fontFamily:  'BlinkMacSystemFont',
+      fontSize: 18,
+    },
+    palette: {
+      primary: {
+        main: '#34495E', 
+      },
+      background: {
+        default: '#95A5A6',
+      },
+    },
+  });
+
   return (
-    <ItHavePremissionContext.Provider value={{isLogdin,setIsLogdin}}>
-      <ManeRouter/>
-    </ItHavePremissionContext.Provider>
+    <ThemeProvider theme={theme}>
+      <ItHavePremissionContext.Provider value={{isLogdin,setIsLogdin}}>
+        <ManeRouter/>
+      </ItHavePremissionContext.Provider>
+    </ThemeProvider>
   );
 }
 

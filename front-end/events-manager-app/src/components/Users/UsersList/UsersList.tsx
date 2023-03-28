@@ -1,14 +1,33 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { CreateUserForm } from "../CreateUserForm/CreateUserForm";
+import { EditUserForm } from "../EditUserForm";
 import { TUser } from "./type";
+import { 
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography
+} from '@mui/material';
 
-export const UsersList = () => {
+
+
+
+export const UsersList:FC = () => {
   const [users, setUsers] = useState<TUser[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const [isCreateUserFormOpen, setIsCreateUserFormOpen] = useState<boolean>(false);
+  const [isCreateUserFormOpen, setIsCreateUserFormOpen] = useState<boolean>(false,);
   const [triger, setTriger] = useState<boolean>(false);
+const [isEditUserFormOpen, setIsEditUserFormOpen] = useState<boolean>(false);
 
   useEffect(() => {
     setLoading(true);
@@ -29,25 +48,11 @@ export const UsersList = () => {
       });
   }, [triger]);
 
-  const handleCreateUser = () => {
+  const handleRenderList = () => {
     setTriger(!triger);
   };
 
-  const handleEditUser = (user: TUser) => {
-    const { _id } = user;
-
-    axios.post( `http://localhost:5000/users/${_id}`, { 
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-    .then((response) => {
-      setTriger(!triger);
-    })
-    .catch((error) => {
-      setError(error.message);
-    });
-  };
+ 
 
 
 
@@ -68,46 +73,62 @@ export const UsersList = () => {
       });
   };
 
-  const onClose = () => {
+  const handleClose = () => {
     setIsCreateUserFormOpen(false);
+    setIsEditUserFormOpen(false);
   };
-
   return (
     <div>
-      <h1>Users List</h1>
-      {loading && <p>Loading...</p>}
-      {error && <p>Error: {error}</p>}
-      <table>
-        <thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Age</th>
-            <th>Date of Birth</th>
-            <th>Email</th>
-            <th>Event</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user: TUser) => (
-            <tr key={user._id}>
-              <td>{user.firstName}</td>
-              <td>{user.lastName}</td>
-              <td>{user.age}</td>
-              <td>{user.dateOfBirth}</td>
-              <td>{user.email}</td>
-              <td>{user.eventName || "-"}</td>
-              <td>
-                <button onClick={() => handleEditUser(user)}>Edit</button>
-                <button onClick={() => handleDeleteUser(user)}>Delete</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <button onClick={() => setIsCreateUserFormOpen(true)}>Create New User</button>
-      {isCreateUserFormOpen && <CreateUserForm onClose={onClose} onCreateUser={handleCreateUser} />}
+      <Typography variant="h1">Users List</Typography>
+      {loading && <Typography>Loading...</Typography>}
+      {error && <Typography>Error: {error}</Typography>}
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>First Name</TableCell>
+              <TableCell>Last Name</TableCell>
+              <TableCell>Age</TableCell>
+              <TableCell>Date of Birth</TableCell>
+              <TableCell>Email</TableCell>
+              <TableCell>Event</TableCell>
+              <TableCell>Action</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow key={user._id}>
+                <TableCell>{user.firstName}</TableCell>
+                <TableCell>{user.lastName}</TableCell>
+                <TableCell>{user.age}</TableCell>
+                <TableCell>{user.dateOfBirth}</TableCell>
+                <TableCell>{user.email}</TableCell>
+                <TableCell>{user.eventName || '-'}</TableCell>
+                <TableCell>
+                  <Button onClick={() => setIsEditUserFormOpen(true)}>Edit</Button>
+                  <Button onClick={() => handleDeleteUser(user)}>Delete</Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+      <Button onClick={() => setIsCreateUserFormOpen(true)}>Create New User</Button>
+      <Dialog open={isCreateUserFormOpen || isEditUserFormOpen} onClose={handleClose}>
+        <DialogTitle>{isCreateUserFormOpen ? 'Create New User' : 'Edit User'}</DialogTitle>
+        <DialogContent>
+        {<CreateUserForm isOpen onClose={handleClose} onCreateUser={handleRenderList} />}
+        {<EditUserForm isOpen user={{}} onClose={handleClose} onCreateUser={handleRenderList} />}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={handleRenderList}>Save</Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
+
+
+
+
